@@ -1,2 +1,2 @@
 # DBSCAN
-Implementation of a ML algorithm, DBSCAN, on biological data.
+Implementation of an ML algorithm, DBSCAN, on biological data.
