@@ -1,0 +1,64 @@
+#clincial contains AGE and BMI of patients along with patient ID of 99 GBM patients
+#metabolites contains the same data as metabolome, except the patient ids fall under Patient_ID column
+data1 = pd.read_csv('clinical.csv')
+data2 = pd.read_csv('metabolites.csv')
+#merge data
+df = pd.merge(data1, data2, on='Patient_ID', how='outer')
+df
+X_train = df[['lactic.acid', 'pyruvic.acid', 'D.glucose']]
+X_train = X_train.fillna(X_train.mean())
+k_values = range(4, 9)  
+# Store the optimal epsilon values for each k
+optimal_epsilons = []
+
+plt.figure(figsize=(8,6))
+
+for k in k_values:
+    # Fit the NearestNeighbors model
+    neighbors = NearestNeighbors(n_neighbors=k)
+    neighbors_fit = neighbors.fit(X_train)
+    distances, indices = neighbors_fit.kneighbors(X_train)
+    mean_distances = distances.mean(axis=1)
+    mean_distances = np.sort(mean_distances)
+    kneedle = KneeLocator(range(len(mean_distances)), mean_distances, S=1.0, curve='convex', direction='increasing')
+    optimal_k = kneedle.elbow
+    optimal_epsilon = mean_distances[optimal_k]
+    optimal_epsilons.append((k, optimal_epsilon))
+    plt.plot(range(len(mean_distances)), mean_distances, label=f'k={k}')
+    plt.axvline(x=optimal_k, color='r', linestyle='--')
+
+plt.xlabel('Points sorted by distance')
+plt.ylabel('Mean Distance to k Nearest Neighbors')
+plt.title('Elbow Plot for Different k Values')
+plt.legend()
+plt.show()
+
+for k, epsilon in optimal_epsilons:
+    print(f'Optimal epsilon for k={k}: {epsilon}')
+
+dbscan = DBSCAN(eps=0.9904756251458471, min_samples=4)
+dbscan.fit(X_train)
+df['cluster'] = dbscan.labels_
+print(df['cluster'].value_counts())
+outliers = df[df['cluster'] == -1]
+clusters = df[df['cluster'] != -1]
+
+fig3, axes = plt.subplots(1, 3, figsize=(20,5))
+
+sns.scatterplot(ax=axes[0], x='D.glucose', y='pyruvic.acid', data=clusters, hue='cluster', palette='Set1', s=100)
+axes[0].scatter(outliers['D.glucose'], outliers['pyruvic.acid'], color='black', s=10, label='noise', marker='o')
+axes[0].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
+axes[0].set_title('D glucose vs Pyruvic Acid')
+
+sns.scatterplot(ax=axes[1], x='D.glucose', y='lactic.acid', data=clusters, hue='cluster', palette='Set1', s=100)
+axes[1].scatter(outliers['D.glucose'], outliers['lactic.acid'], color='black', s=10, label='noise', marker='o')
+axes[1].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
+axes[1].set_title('D glucose vs Lactic Acid')
+
+sns.scatterplot(ax=axes[2], x='pyruvic.acid', y='lactic.acid', data=clusters, hue='cluster', palette='Set1', s=100)
+axes[2].scatter(outliers['pyruvic.acid'], outliers['lactic.acid'], color='black', s=10, label='noise', marker='o')
+axes[2].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
+axes[2].set_title('Pyruvic Acid vs Lactic Acid')
+
+plt.tight_layout()
+plt.show()
