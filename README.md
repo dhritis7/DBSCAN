@@ -12,18 +12,26 @@ Executive Summary
 
 		
 Table Of Contents
-  Introduction	
-  	About the domain	
-  	Scope and Objectives 	
-  Detailed design architecture	
+
+Introduction
+
+    About the domain
+  	Scope and Objectives 
+   
+Detailed design architecture
+
 	Proposed system architecture	
 	Design architecture 	
 	Methodology	
-  Implementation	
+ 
+Implementation	
+
 	About the code 	
-	Functions and tools used	
-  Results and Discussions 	
-  Conclusion and Future enhancement	
+	Functions and tools used
+ 
+Results and Discussions 	
+  
+Conclusion and Future enhancement	
  
 Chapter 1                                      
 INTRODUCTION
