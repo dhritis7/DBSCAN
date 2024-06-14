@@ -40,25 +40,14 @@ dbscan = DBSCAN(eps=0.9904756251458471, min_samples=4)
 dbscan.fit(X_train)
 df['cluster'] = dbscan.labels_
 print(df['cluster'].value_counts())
+
 outliers = df[df['cluster'] == -1]
 clusters = df[df['cluster'] != -1]
-
-fig3, axes = plt.subplots(1, 3, figsize=(20,5))
-
-sns.scatterplot(ax=axes[0], x='D.glucose', y='pyruvic.acid', data=clusters, hue='cluster', palette='Set1', s=100)
-axes[0].scatter(outliers['D.glucose'], outliers['pyruvic.acid'], color='black', s=10, label='noise', marker='o')
-axes[0].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
-axes[0].set_title('D glucose vs Pyruvic Acid')
-
-sns.scatterplot(ax=axes[1], x='D.glucose', y='lactic.acid', data=clusters, hue='cluster', palette='Set1', s=100)
-axes[1].scatter(outliers['D.glucose'], outliers['lactic.acid'], color='black', s=10, label='noise', marker='o')
-axes[1].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
-axes[1].set_title('D glucose vs Lactic Acid')
-
-sns.scatterplot(ax=axes[2], x='pyruvic.acid', y='lactic.acid', data=clusters, hue='cluster', palette='Set1', s=100)
-axes[2].scatter(outliers['pyruvic.acid'], outliers['lactic.acid'], color='black', s=10, label='noise', marker='o')
-axes[2].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
-axes[2].set_title('Pyruvic Acid vs Lactic Acid')
-
+fig3, axes = plt.subplots(1, 3, figsize=(20, 5))
+for i, (x_var, y_var) in enumerate([('D.glucose', 'pyruvic.acid'), ('D.glucose', 'lactic.acid'), ('pyruvic.acid', 'lactic.acid')]):
+    sns.scatterplot(ax=axes[i], x=x_var, y=y_var, data=clusters, hue='cluster', palette='Set1', s=100)
+    axes[i].scatter(outliers[x_var], outliers[y_var], color='black', s=10, label='noise', marker='o')
+    axes[i].legend(loc='upper right', bbox_to_anchor=(1.2, 1), title='Clusters')
+    axes[i].set_title(f'{x_var} vs {y_var}')
 plt.tight_layout()
 plt.show()
