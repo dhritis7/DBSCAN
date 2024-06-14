@@ -11,11 +11,10 @@ Executive Summary
 
 
 		
-	Executive Summary
-	Table Of Contents
+Table Of Contents
   Introduction	
-  About the domain	
-  Scope and Objectives 	
+  	About the domain	
+  	Scope and Objectives 	
   Detailed design architecture	
 	Proposed system architecture	
 	Design architecture 	
