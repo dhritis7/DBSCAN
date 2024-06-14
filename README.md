@@ -8,3 +8,12 @@ As seen in "Proteogenomic and metabolomic characterization of human glioblastoma
 Metabolite identifications and data processing were conducted as previously detailed (Webb-Robertson et al., 2014). GC-MS raw data files were processed using Metabolite Detector software v2.0.6 beta (Hiller et al., 2009). Retention indices (RI) of detected metabolites were calculated based on the analysis of the FAMEs mixture, followed by their chromatographic alignment across all analyses after deconvolution. Metabolites were identified by matching experimental spectra to an augmented version of the Agilent Fiehn Metabolomics Retention Time Locked (RTL) Library (Kind et al., 2009), containing spectra and validated retention indices. All metabolite identifications were manually validated. The NIST 08 GC-MS library was also used to cross validate the spectral matching scores obtained using the Agilent library and to provide identifications for metabolites that were initially unidentified. The three most abundant fragment ions in the spectra of each identified metabolite were automatically determined by Metabolite Detector, and their summed abundances were integrated across the GC elution profile. A matrix of identified metabolites, unidentified metabolite features, and their corresponding abundances for each sample in the batch were exported for statistics. 
 
 # Executive Summary
+
+
+
+# Introduction 
+Density-Based Spatial Clustering of Applications with Noise (DBSCAN) is a base algorithm for density-based clustering. It is a popular unsupervised learning method used for model construction and machine learning algorithms. It is a clustering method utilized for separating high-density clusters from low-density clusters with data containing outliers and noise. It is very useful in defining arbitrarily shaped clusters.
+It classifies points as core, border, or noise based on two parameters: 
+Eps (the radius defining a point's neighborhood) 
+MinPts (the minimum number of points required within this radius for a point to be considered a core point)
+
