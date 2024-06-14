@@ -1,0 +1,70 @@
+#file uploaded to jupyter environment as metabolome.csv, containing numeric data of abundance of metabolites in 75 patients
+data = pd.read_csv('metabolome.csv', index_col=0)
+data.head()
+data = data.T #transpose data to obtain features in columns
+data.describe()
+data.info()
+data.fillna(data.mean(), inplace=True)
+data.corr()
+
+#heatmap to visualize correlations
+import seaborn as sns
+plt.figure(figsize=(24,12))
+sns.heatmap(data.corr(),annot=True,square=True,cmap='tab10')
+plt.xticks(fontsize=10,fontweight='bold')
+plt.yticks(fontsize=10,fontweight='bold')
+
+#scale data, dimensionality reduction
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(data)
+data_scaled
+normal=MinMaxScaler()
+data_pca=normal.fit_transform(data_scaled)
+pca=PCA(n_components=2)
+data_pca=pca.fit_transform(data_pca)
+df=pd.DataFrame(data_pca,columns=['X','Y'])
+df.describe()
+
+k_values = range(4, 20)
+# Store the optimal epsilon values for each k
+optimal_epsilons = []
+plt.figure(figsize=(8,8))
+for k in k_values:
+    # Fit the NearestNeighbors model
+    neighbors = NearestNeighbors(n_neighbors=k)
+    neighbors_fit = neighbors.fit(df)
+    distances, indices = neighbors_fit.kneighbors(df)
+    # Calculate the mean distances to the k nearest neighbors
+    mean_distances = distances.mean(axis=1)
+    # Sort the mean distances to plot the elbow graph
+    mean_distances = np.sort(mean_distances)
+    # Use kneed to find the optimal epsilon
+    kneedle = KneeLocator(range(len(mean_distances)), mean_distances, S=1.0, curve='convex', direction='increasing')
+    optimal_k = kneedle.elbow
+    optimal_epsilon = mean_distances[optimal_k]
+    optimal_epsilons.append((k, optimal_epsilon))
+    # Plot the k-distance graph
+    plt.plot(range(len(mean_distances)), mean_distances, label=f'k={k}')
+    plt.axvline(x=optimal_k, color='r', linestyle='--')
+
+plt.xlabel('Points sorted by distance')
+plt.ylabel('Mean Distance to k Nearest Neighbors')
+plt.title('Elbow Plot for Different k Values')
+plt.legend()
+plt.show()
+for k, epsilon in optimal_epsilons:
+    print(f'Optimal epsilon for k={k}: {epsilon}')
+
+#according to kneelocator results, optimal epsilon chosen based on low epsilon value and minpts >= dimensions*2 
+#dimensions of reduced data = 2
+dbscan = DBSCAN(eps=0.2767554389483952, min_samples=4)
+cluster = dbscan.fit_predict(df)
+df['cluster'] = dbscan.labels_
+print(df['cluster'].value_counts())
+outliers = df[df['cluster'] == -1]
+clusters = df[df['cluster'] != -1]
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='X', y='Y', data=clusters, hue='cluster', palette='tab20', s=300)
+plt.scatter(outliers['X'], outliers['Y'], color='black', s=10, label='noise', marker='o')
+plt.legend(loc='upper right', bbox_to_anchor=(1.17, 1), title='Clusters')
+plt.show()
